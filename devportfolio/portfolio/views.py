@@ -1,30 +1,61 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
-from .forms import ResumeUploadForm, ProjectForm
 from .models import Project
+from .forms import ProjectForm
+from .forms import CustomUserCreationForm
 
-# @login_required
-def profile_view(request):
-    projects = Project.objects.filter(user=request.user)
-    resume_form = ResumeUploadForm(instance=request.user)
 
+def register_view(request):
     if request.method == 'POST':
-        resume_form = ResumeUploadForm(request.POST, request.FILES, instance=request.user)
-        if resume_form.is_valid():
-            resume_form.save()
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Log in after registration
             return redirect('profile')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'register.html', {'form': form})
 
-    return render(request, 'profile.html', {'projects': projects, 'resume_form': resume_form})
 
-# @login_required
-def add_project(request):
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('profile')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+@login_required
+def profile_view(request):
+    return render(request, 'profile.html')
+
+
+@login_required
+def project_list_view(request):
+    projects = Project.objects.filter(user=request.user)
+    return render(request, 'project_list.html', {'projects': projects})
+
+
+@login_required
+def add_project_view(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
         if form.is_valid():
             project = form.save(commit=False)
             project.user = request.user
             project.save()
-            return redirect('profile')
+            return redirect('project_list')
     else:
         form = ProjectForm()
     return render(request, 'add_project.html', {'form': form})

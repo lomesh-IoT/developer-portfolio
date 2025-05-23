@@ -1,14 +1,7 @@
-<h2>Welcome, {{ user.username }}</h2>
-<form method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ resume_form.as_p }}
-  <button type="submit">Upload Resume</button>
-</form>
-
-<h3>Your Projects</h3>
-<ul>
-  {% for project in projects %}
-    <li><strong>{{ project.title }}</strong> — {{ project.description }}</li>
-  {% endfor %}
-</ul>
-<a href="{% url 'add_project' %}">Add New Project</a>
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h2>Welcome, {{ user.username }}!</h2>
+<p>Your email: {{ user.email }}</p>
+<a href="/projects/add/" class="btn btn-primary">Add New Project</a>
+{% endblock %}

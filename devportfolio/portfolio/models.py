@@ -1,15 +1,19 @@
+# portfolio/models.py
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-
 class User(AbstractUser):
-    github_link = models.URLField(blank=True, null=True)
-    resume = models.FileField(upload_to='resumes/', blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.username
+
 
 class Project(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
+    user = models.ForeignKey('portfolio.User', on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
     description = models.TextField()
-    tech_stack = models.CharField(max_length=255)
-    repo_link = models.URLField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    technologies = models.CharField(max_length=200, default="Not specified")
+
+    def __str__(self):
+        return self.title
