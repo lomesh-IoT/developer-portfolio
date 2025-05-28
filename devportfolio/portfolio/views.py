@@ -10,6 +10,9 @@ from .forms import CustomUserCreationForm
 def home_view(request):
     return render(request, 'home.html')
 
+def aboutMe_view(request):
+    return render(request, 'aboutMe.html')
+
 
 def register_view(request):
     if request.method == 'POST':
