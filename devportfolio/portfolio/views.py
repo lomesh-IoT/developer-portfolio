@@ -7,6 +7,10 @@ from .forms import ProjectForm
 from .forms import CustomUserCreationForm
 
 
+def home_view(request):
+    return render(request, 'home.html')
+
+
 def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
